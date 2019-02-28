@@ -5,5 +5,5 @@ import (
 )
 
 func FormatTime(t time.Time) string {
-	return t.Format(time.RFC3339)
+	return t.Local().Format(time.RFC3339)
 }
