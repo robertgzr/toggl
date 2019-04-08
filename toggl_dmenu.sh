@@ -5,20 +5,20 @@ bail() {
     exit 1
 }
 rofi() {
-    exec rofi -dmenu -p toggl -i "$@"
+    exec rofi -markup -markup-rows -dmenu -p toggl -i "$@"
 }
 
 ACTIONS=(
     "Start timer"
     "Stop timer"
-    "Running timers"
+    "List timers"
 )
 select_action() {
     for a in "${ACTIONS[@]}"; do echo "$a"; done | rofi
 }
 
 select_project() {
-    ret=`toggl -t $TOKEN projects ls | rofi -mesg "select a project" -selected-row 1 | cut -d' ' -f 1`
+    ret=`toggl -t $TOKEN projects ls | rofi -mesg "<i>select a project</i>" -selected-row 1 | cut -d' ' -f 1`
     if [[ -z $ret ]]; then
         return
     fi
@@ -30,22 +30,19 @@ if [[ -z $TOKEN ]]; then
 fi
 
 case `select_action` in
-    "${ACTIONS[0]}")
+    "${ACTIONS[0]}") # start timer
         p=`select_project`
         if [[ -z $p ]]; then
             exit 1
         fi
-        d=`rofi -mesg "enter a description"`
-        if [[ -z $d ]]; then
-            exit 1
-        fi
+        d=`rofi -mesg "<i>enter a description</i>"`
         ret=`toggl -t $TOKEN timer start --description "$d" --project "$p"`
         if [[ $? -ne 0 ]]; then
             bail "$ret"
         fi
         ;;
-    "${ACTIONS[1]}")
-        ret=`toggl -t $TOKEN timers ls | rofi -selected-row 1 | cut -d' ' -f1`
+    "${ACTIONS[1]}") # stop timer
+        ret=`toggl -t $TOKEN timers ls | tail -n +2 | cut -d' ' -f1`
         if [[ $? -ne 0 ]]; then
             bail "$ret"
         fi
@@ -57,7 +54,7 @@ case `select_action` in
             bail "$ret"
         fi
         ;;
-    "${ACTIONS[2]}")
-        toggl -t $TOKEN timers ls | rofi -selected-row 1
+    "${ACTIONS[2]}") # running timer
+        toggl -t $TOKEN timers ls -a | rofi -selected-row 1
         ;;
 esac
