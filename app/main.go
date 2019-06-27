@@ -11,14 +11,16 @@ import (
 
 func init() {
 	cli.VersionPrinter = func(c *cli.Context) {
-		fmt.Printf("%s version %s (%s)\n", c.App.Name, c.App.Version, BUILDTIME)
+		fmt.Printf("%s version %s (%s)\n", c.App.Name, c.App.Version, c.App.Metadata["build_date"])
 	}
 }
 
-func New() *cli.App {
+func New(version, commit, date string) *cli.App {
 	app := cli.NewApp()
 	app.Name = "toggl"
-	app.Version = VERSION
+	app.Version = version
+	app.Metadata["build_commit"] = commit
+	app.Metadata["build_date"] = date
 	app.Usage = `toggl.com CLI`
 	app.Flags = []cli.Flag{
 		cli.StringFlag{

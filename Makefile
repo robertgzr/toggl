@@ -1,14 +1,15 @@
 COMMAND := bin/toggl
-GOBUILD_FLAGS := -ldflags "-X github.com/robertgzr/toggl/app.VERSION=$(shell git describe --tags --always) -X github.com/robertgzr/toggl/app.BUILDTIME=$(shell date -u +%Y%m%d.%H%M%S)"
+GOBUILD_FLAGS := -ldflags "-X main.version=$(shell git describe --tags --always) -X main.date=$(shell date -u +%Y%m%d.%H%M%S)"
 
 all: $(COMMAND)
-
-clean:
-	$(RM) $(COMMAND)
-	# git clean -n
 
 build: clean $(COMMAND)
 $(COMMAND):
 	go build $(GOBUILD_FLAGS) -o $@ 
 
-.PHONY: build
+clean:
+	$(RM) $(COMMAND)
+	$(RM) ./dist
+	# git clean -n
+
+.PHONY: build clean

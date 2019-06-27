@@ -1,0 +1,47 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+  - make clean
+  - go mod download
+
+builds:
+- main: ./main.go
+  binary: toggl
+  env: &env
+  - CGO_ENABLED=0
+  flags: &flags
+  - -tags='osusergo netgo static_build'
+  goos: &goos
+  - linux
+  - darwin
+  goarch: &goarch
+  - amd64
+  - arm
+
+archives:
+- name_template: "{{.ProjectName}}-v{{.Version}}-{{.Os}}-{{.Arch}}"
+  replacements:
+    386: i386
+    amd64: x86_64
+  wrap_in_directory: true
+  files:
+  - toggl_dmenu.sh
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{.Tag}}-dev"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+    - 'README'
+
+release:
+  draft: true
+  name_template: "v{{.Tag}}"
