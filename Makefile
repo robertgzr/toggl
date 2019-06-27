@@ -9,7 +9,7 @@ $(COMMAND):
 
 clean:
 	$(RM) $(COMMAND)
-	$(RM) ./dist
+	$(RM) -r ./dist
 	# git clean -n
 
 .PHONY: build clean
