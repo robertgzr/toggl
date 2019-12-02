@@ -14,7 +14,7 @@ import (
 
 var Command = cli.Command{
 	Name:    "project",
-	Aliases: []string{"projects"},
+	Aliases: []string{"projects", "p"},
 	Usage:   "manipulate projects",
 	Subcommands: cli.Commands{
 		listCommand,

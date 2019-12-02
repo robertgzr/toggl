@@ -12,7 +12,7 @@ import (
 
 var Command = cli.Command{
 	Name:    "timer",
-	Aliases: []string{"timers"},
+	Aliases: []string{"timers", "t"},
 	Usage:   "control timers",
 	Subcommands: cli.Commands{
 		listCommand,
