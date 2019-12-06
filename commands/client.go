@@ -12,8 +12,8 @@ import (
 )
 
 func NewClient(ctx *cli.Context) (*gthttp.TogglHttpClient, error) {
-	client, err := gthttp.NewClient(ctx.GlobalString("token"))
-	// gthttp.AlwaysUseAPIToken(ctx.GlobalString("token")),
+	client, err := gthttp.NewClient(ctx.GlobalString("token"),
+		gthttp.AlwaysUseAPIToken(ctx.GlobalString("token")))
 	// gthttp.SetTraceLogger(log.New(os.Stderr, "gthttp", log.LstdFlags)))
 	if err != nil {
 		return nil, errors.Wrap(err, "creating client")
