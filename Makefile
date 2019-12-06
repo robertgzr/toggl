@@ -1,15 +1,40 @@
-COMMAND := bin/toggl
-GOBUILD_FLAGS := -ldflags "-X main.version=$(shell git describe --tags --always) -X main.date=$(shell date -u +%Y%m%d.%H%M%S)"
 
-all: $(COMMAND)
+OUTDIR := bin
+VERSION := $(shell git describe --tags --always)
+GOFLAGS ?=
+LDFLAGS := \
+	-X main.version=$(VERSION) \
+	-X main.date=$(shell date -u +%Y%m%d.%H%M%S)
 
-build: clean $(COMMAND)
-$(COMMAND):
-	go build $(GOBUILD_FLAGS) -o $@ 
+GOSRC!=find . -name '*.go'
+GOSRC+=go.mod go.sum
+
+
+all: $(OUTDIR)/toggl
+
+build: clean $(OUTDIR)/toggl
+
+$(OUTDIR)/toggl: $(GOSRC)
+	go build $(GOFLAGS) \
+		-ldflags "$(LDFLAGS)" \
+		-o $@
 
 clean:
-	$(RM) $(COMMAND)
+	$(RM) -r $(OUTDIR)
 	$(RM) -r ./dist
-	# git clean -n
 
-.PHONY: build clean
+PREFIX?=/usr/local
+_INSTDIR=$(DESTDIR)$(PREFIX)
+BINDIR?=$(_INSTDIR)/bin
+
+install: all
+	mkdir -p $(BINDIR)
+	install -m755 $(OUTDIR)/toggl $(BINDIR)/toggl
+	install -m755 toggl_dmenu.sh $(BINDIR)/toggl_dmenu
+
+uninstall:
+	$(RM) $(BINDIR)/toggl
+	$(RM) $(BINDIR)/toggl_dmenu
+
+
+.PHONY: clean install uninstall

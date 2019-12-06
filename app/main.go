@@ -19,8 +19,10 @@ func New(version, commit, date string) *cli.App {
 	app := cli.NewApp()
 	app.Name = "toggl"
 	app.Version = version
-	app.Metadata["build_commit"] = commit
-	app.Metadata["build_date"] = date
+	app.Metadata = map[string]interface{}{
+		"build_commit": commit,
+		"build_date":   date,
+	}
 	app.Usage = `toggl.com CLI`
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
